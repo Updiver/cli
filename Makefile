@@ -3,7 +3,7 @@ GOBUILD=$(GOCMD) build
 GORUN=$(GOCMD) run
 BINARY_FOLDER=./build
 
-Version := $(shell git describe --tags --dirty)
+Version := $(shell git describe --tags)
 GitCommit := $(shell git rev-parse HEAD)
 LDFLAGS := "-s -w -X github.com/updiver/cli/cmd/cli/cmd.Version=$(Version) -X github.com/updiver/cli/cmd/cli/cmd.GitCommit=$(GitCommit)"
 
@@ -28,12 +28,12 @@ build-%:
 
 build-all-platforms:
 	mkdir -p build/
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-darwin-m1 ./cmd/cli
-	CGO_ENABLED=0 GOOS=linux go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-amd64 ./cmd/cli
-	CGO_ENABLED=0 GOOS=darwin go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-darwin ./cmd/cli
-	GOARM=7 GOARCH=arm CGO_ENABLED=0 GOOS=linux go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-arm ./cmd/cli
-	GOARCH=arm64 CGO_ENABLED=0 GOOS=linux go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-arm64 ./cmd/cli
-	GOOS=windows CGO_ENABLED=0 go build -a -ldflags $(LDFLAGS) -o build/dumper-cli.exe ./cmd/cli
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-darwin-m1-${Version} ./cmd/cli
+	CGO_ENABLED=0 GOOS=linux go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-amd64-${Version} ./cmd/cli
+	CGO_ENABLED=0 GOOS=darwin go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-darwin-${Version} ./cmd/cli
+	GOARM=7 GOARCH=arm CGO_ENABLED=0 GOOS=linux go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-arm-${Version} ./cmd/cli
+	GOARCH=arm64 CGO_ENABLED=0 GOOS=linux go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-arm64-${Version} ./cmd/cli
+	GOOS=windows CGO_ENABLED=0 go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-${Version}.exe ./cmd/cli
 
 run-%:
 		$(MAKE) build-$*
