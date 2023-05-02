@@ -5,7 +5,7 @@ BINARY_FOLDER=./build
 
 Version := $(shell git describe --tags --dirty)
 GitCommit := $(shell git rev-parse HEAD)
-LDFLAGS := "-s -w -X main.Version=$(Version) -X main.GitCommit=$(GitCommit)"
+LDFLAGS := "-s -w -X github.com/updiver/cli/cmd/cli/cmd.Version=$(Version) -X github.com/updiver/cli/cmd/cli/cmd.GitCommit=$(GitCommit)"
 
 .PHONY: all clean-all clean-binaries build-all build-% run-% run-tests run-tests-cover run-tests-cover-profile build-all-platforms
 
@@ -23,7 +23,7 @@ clean-binaries:
 build-all:
 		$(MAKE) build-cli
 build-%:
-		$(GOBUILD) -ldflags="-s -w" -o $(BINARY_FOLDER)/$* -v ./cmd/$*
+		$(GOBUILD) -ldflags=${LDFLAGS} -o $(BINARY_FOLDER)/$* -v ./cmd/$*
 		chmod +x $(BINARY_FOLDER)/$*
 
 build-all-platforms:
