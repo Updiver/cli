@@ -41,7 +41,13 @@ var (
 				fullDestFolder := path.Join(DestinationFolder, *repo.Owner.Login, *repo.Name)
 				logger.Printf("=== clone repository to: %s\n", fullDestFolder)
 				dpr := dumper.New()
-				err = dpr.DumpRepository(*repo.CloneURL, fullDestFolder, Username, Token)
+				onlyDefaultBranch := true
+				opts := &dumper.DumpRepositoryOptions{
+					RepositoryURL:     *repo.CloneURL,
+					Destination:       fullDestFolder,
+					OnlyDefaultBranch: &onlyDefaultBranch,
+				}
+				_, err = dpr.DumpRepository(opts)
 				if err != nil {
 					logger.Printf("dump repository: %s\n", err)
 					continue
