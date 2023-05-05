@@ -13,18 +13,18 @@ default:
 	${MAKE} run-cli
 
 all:
-		$(MAKE) run
+	$(MAKE) run
 
 clean-all:
-		$(MAKE) clean-binaries
+	$(MAKE) clean-binaries
 clean-binaries:
-		-rm -f $(BINARY_FOLDER)/*
+	-rm -f $(BINARY_FOLDER)/*
 
 build-all:
 		$(MAKE) build-cli
 build-%:
-		$(GOBUILD) -ldflags=${LDFLAGS} -o $(BINARY_FOLDER)/$* -v ./cmd/$*
-		chmod +x $(BINARY_FOLDER)/$*
+	$(GOBUILD) -ldflags=${LDFLAGS} -o $(BINARY_FOLDER)/$* -v ./cmd/$*
+	chmod +x $(BINARY_FOLDER)/$*
 
 build-all-platforms:
 	mkdir -p build/
@@ -36,8 +36,8 @@ build-all-platforms:
 	GOOS=windows CGO_ENABLED=0 go build -a -ldflags $(LDFLAGS) -o build/dumper-cli-${Version}.exe ./cmd/cli
 
 run-%:
-		$(MAKE) build-$*
-		$(BINARY_FOLDER)/$* --help
+	$(MAKE) build-$*
+	$(BINARY_FOLDER)/$* --help
 
 run-tests:
 	$(GOCMD) test -count=1 ./... -v
