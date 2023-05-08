@@ -41,11 +41,10 @@ var (
 				fullDestFolder := path.Join(DestinationFolder, *repo.Owner.Login, *repo.Name)
 				logger.Printf("=== clone repository to: %s\n", fullDestFolder)
 				dpr := dumper.New()
-				onlyDefaultBranch := true
 				opts := &dumper.DumpRepositoryOptions{
 					RepositoryURL:     *repo.CloneURL,
 					Destination:       fullDestFolder,
-					OnlyDefaultBranch: &onlyDefaultBranch,
+					OnlyDefaultBranch: dumper.PositiveBoolRef(),
 				}
 				_, err = dpr.DumpRepository(opts)
 				if err != nil {
