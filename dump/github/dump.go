@@ -70,6 +70,15 @@ func dumpRepo(repo *github.Repository, opts *DumpOptions) error {
 		return fmt.Errorf("dump repository: %w", err)
 	}
 
+	// all-branches is a mirror clone, it's required to convert bare into non-bare
+	// so user can properly use that repo
+	if flags.CloneMode(opts.CloneMode) == flags.CloneModeAllBranches {
+		err = dumper.Convert(fullDestFolder, dumper.RepositoryTypeNonBare)
+		if err != nil {
+			return fmt.Errorf("convert repository: %w", err)
+		}
+	}
+
 	logger.Printf("repo [%s] dumped", *repo.Name)
 	return nil
 }
