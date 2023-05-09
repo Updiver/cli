@@ -7,6 +7,8 @@ import (
 
 	bitbucket "github.com/ktrysmt/go-bitbucket"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"github.com/updiver/cli/flags"
 	"github.com/updiver/dumper"
 )
 
@@ -16,11 +18,27 @@ var (
 	Username          string
 	Token             string
 	DestinationFolder string
-	BitbucketCmd      = &cobra.Command{
+	CloneMode         flags.CloneMode
+
+	BitbucketCmd = &cobra.Command{
 		Use:   "bitbucket",
 		Short: "bitbucket clones repositories by using user creds passed in",
+		Args: func(cmd *cobra.Command, args []string) error {
+			cmd.Flags().VisitAll(func(f *pflag.Flag) {
+				if f.Name == "clone-mode" {
+					if err := flags.CloneMode(f.Value.String()).Valid(); err != nil {
+						logger.Fatalf("clone mode: %s\n", err)
+					}
+				}
+			})
+
+			return nil
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			logger.Println("dumping bitbucket repositories")
+
+			cloneModeFlag := cmd.Flag("clone-mode")
+			CloneMode = flags.CloneMode(cloneModeFlag.Value.String())
 
 			client := bitbucket.NewBasicAuth(Username, Token)
 			client.Pagelen = 10
@@ -56,12 +74,13 @@ var (
 								logger.Printf("=== clone repository to: %s\n", fullDestFolder)
 
 								dpr := dumper.New()
-								onlyDefaultBranch := true
 								opts := &dumper.DumpRepositoryOptions{
-									RepositoryURL:     httpsCloneLink,
-									Destination:       fullDestFolder,
-									OnlyDefaultBranch: &onlyDefaultBranch,
+									RepositoryURL: httpsCloneLink,
+									Destination:   fullDestFolder,
+									Creds:         dumper.Creds{Username: Username, Password: Token},
 								}
+								flags.ApplyCloneMode(opts, CloneMode)
+
 								_, err = dpr.DumpRepository(opts)
 								if err != nil {
 									logger.Printf("dump repository: %s\n", err)

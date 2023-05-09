@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/require"
 )
 
 func TestExecute(t *testing.T) {
@@ -22,20 +23,20 @@ func TestExecute(t *testing.T) {
 		dumper-cli dumps repositories under user account it is specified via command line arguments
 
 		Usage:
-			dumper-cli [command]
-
+		dumper-cli [command]
+	
 		Available Commands:
 			completion  Generate the autocompletion script for the specified shell
 			dump        dump clones repositories by using user creds passed in
 			help        Help about any command
 			version     dumper-cli utility version
-
+		
 		Flags:
-			-h, --help   help for dumper-cli
-
+			-m, --clone-mode string   clone mode (default-branch, all-branches) (default "default-branch")
+			-h, --help                help for dumper-cli
+		
 		Use "dumper-cli [command] --help" for more information about a command.
 	`
-	if strings.EqualFold(output.String(), expected) {
-		t.Errorf("expected %s, got %s", expected, output.String())
-	}
+
+	require.ElementsMatch(t, strings.Fields(output.String()), strings.Fields(expected))
 }
