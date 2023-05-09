@@ -70,3 +70,61 @@ func TestDumpRepo_DefaultBranchDump(t *testing.T) {
 	}
 
 }
+
+func TestDumpRepo_AllBranchesDump(t *testing.T) {
+	tempDir := os.TempDir()
+
+	mockRepos := []*github.Repository{
+		{
+			Name: github.String("test-repository"),
+			Owner: &github.User{
+				Login: github.String("updiver"),
+			},
+			CloneURL: github.String(testRepositoryURL),
+		},
+	}
+
+	for _, repo := range mockRepos {
+		fullDestinationPath := path.Join(filepath.Clean(tempDir), destinationRepositoryDir, *repo.Name)
+		mockDumpOpts := &DumpOptions{
+			Username:    "",
+			Token:       "blahblah",
+			Destination: fullDestinationPath,
+			CloneMode:   "all-branches",
+		}
+		err := dumpRepo(repo, mockDumpOpts)
+		defer os.RemoveAll(fullDestinationPath)
+
+		clonedRepoPath := path.Join(fullDestinationPath, *repo.Owner.Login, *repo.Name)
+		require.NoError(t, err, "expected no error, got %v", err)
+
+		repository, err := dumper.Repository(clonedRepoPath)
+		require.NoError(t, err, "expected no error, got %v", err)
+		require.NotNil(t, repository, "expected repository to be not nil")
+
+		fileContent, err := os.Open(path.Join(clonedRepoPath, "test-regular-file.txt"))
+		require.NoError(t, err, "open file")
+
+		txt, err := io.ReadAll(fileContent)
+		require.NoError(t, err, "read file content")
+
+		require.Equal(t, "Test regular file content", string(txt), "expect to have proper file content")
+
+		refIter, err := repository.Branches()
+		require.NoError(t, err, "get branches iterator")
+
+		branches := make([]string, 0)
+		refIter.ForEach(func(ref *plumbing.Reference) error {
+			branches = append(branches, ref.Name().Short())
+			return nil
+		})
+		require.Len(t, branches, 3, "expect to have three branches")
+
+		expectedBranches := []string{
+			"feat/test-regular-file-first-change",
+			"feat/test-regular-file-second-change",
+			"main",
+		}
+		require.ElementsMatch(t, expectedBranches, branches, "expect to have proper branch names")
+	}
+}
