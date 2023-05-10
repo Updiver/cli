@@ -59,3 +59,16 @@ To get username you need to:
 - Go to Personal Bitbucket Settings
 - Account settings
 - Bitbucket profile settings -> copy _Username_
+
+## CLI options
+
+```
+./dumper-cli dump
+                |
+                 --> github | bitbucket
+                                       |
+                                         --> -u USERNAME
+                                         --> -d destination of dump
+                                         --> -t app password or access token
+                                         --> -m clone mode (all-branches|default-branch)
+```

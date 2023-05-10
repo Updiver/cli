@@ -3,6 +3,7 @@ module github.com/updiver/cli
 go 1.20
 
 require (
+	github.com/go-git/go-git/v5 v5.6.2-0.20230417220506-0a1c5ab11899
 	github.com/google/go-github/v52 v52.0.0
 	github.com/ktrysmt/go-bitbucket v0.9.56
 	github.com/spf13/cobra v1.7.0
@@ -21,7 +22,6 @@ require (
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/go-git/gcfg v1.5.0 // indirect
 	github.com/go-git/go-billy/v5 v5.4.1 // indirect
-	github.com/go-git/go-git/v5 v5.6.2-0.20230417220506-0a1c5ab11899 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/imdario/mergo v0.3.15 // indirect
