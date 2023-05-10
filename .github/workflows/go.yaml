@@ -24,4 +24,7 @@ jobs:
       - name: Install dependencies
         run: go get ./...
       - name: Test
+        env:
+          BITBUCKET_USERNAME: ${{ secrets.BITBUCKET_USERNAME }}
+          BITBUCKET_TOKEN: ${{ secrets.BITBUCKET_TOKEN }}
         run: make run-tests
